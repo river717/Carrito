@@ -68,6 +68,30 @@ class Archivo(){
         guardarArchivo()
     }
 
+    fun editarProducto(){
+        println("Ingrese el id del producto para actualizar:")
+        val id = readLine()!!
+
+        val posicion = datos.indexOfFirst { it.split(",")[0] == id }
+        if (posicion == -1){
+            println("No se encontro el producto con el id $id")
+            return
+        }
+
+        println("Ingrese el nuevo nombre del producto:")
+        val producto = readLine()!!
+
+        println("Ingrese la nueva existencia del producto:")
+        val existencia = readLine()!!.toInt()
+
+        println("Ingrese el nuevo precio unitario del producto:")
+        val precioUnitario = readLine()!!
+
+        datos[posicion] = "${id},${producto},${existencia},${precioUnitario}"
+
+        guardarArchivo()
+    }
+
     //metodo para guardar el archivo
     private fun guardarArchivo() {
         val escritor = FileWriter(archivo)
@@ -76,6 +100,13 @@ class Archivo(){
             println(linea)
         }
         escritor.close()
+    }
+
+    //Este metodo muestra la lista, aun con cuando se agregar filas nuevas
+    fun mostrarArchivo(){
+        for (linea in datos){
+            println(linea)
+        }
     }
 }
 
