@@ -23,13 +23,13 @@ fun main() {
         print("Seleccione una opción: ")
         opcion = readLine()!!.toInt()
 
-        /* when(opcion){
-            1-> Función para mostrar lista de productos
-            2-> Función para agregar fila de productos
-            3-> Función para editar fila de productos
-            4-> Función para gestionar el carrito
+        when(opcion){
+            1-> archivo.mostrarArchivo()
+            2-> archivo.agregarProducto()
+            3-> archivo.editarProducto()
+            /*4-> Función para gestionar el carrito*/
             5-> println("Saliendo.....")
-        }*/
+        }
     } while (opcion !=5)
 }
 
