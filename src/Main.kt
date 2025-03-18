@@ -27,10 +27,28 @@ fun main() {
             1-> archivo.mostrarArchivo()
             2-> archivo.agregarProducto()
             3-> archivo.editarProducto()
-            /*4-> Función para gestionar el carrito*/
+            4-> gestionarCarretilla(carretilla, archivo)
             5-> println("Saliendo.....")
         }
     } while (opcion !=5)
+}
+
+fun gestionarCarretilla(carretilla: Carretilla, archivo: Archivo) {
+    var opcionCarretilla = 0
+
+    do {
+        println("Menu Carretilla:")
+        println("----------------------------------")
+        println("1. Mostrar productos en la carretilla.")
+        println("2. Agregar producto a la carretilla.")
+        println("3. Volver al menu principal.")
+
+        opcionCarretilla = readLine()!!.toInt()
+
+        when(opcionCarretilla){
+            1-> carretilla.mostrarCarretilla()
+        }
+    } while (opcionCarretilla != 3)
 }
 
 class Archivo(){
@@ -111,5 +129,30 @@ class Archivo(){
 }
 
 class Carretilla(){
+    private val productos = mutableListOf<Pair<String, Int>>() //Intente almacenar  producto y cantidad
+    private val precios = mutableMapOf<String, Double>() // Almacenar producto y precio  unitario
 
+    // Mostrar los productos en la carretilla
+
+    fun mostrarCarretilla(){
+        if (productos.isEmpty()) {
+            println("La carretilla está vacia.")
+        } else {
+            println("Productos en la carretilla:")
+            productos.forEach { (producto, cantidad) ->
+                val precioUnitario = precios[producto] ?: 0.0
+                val precioTotal = cantidad * precioUnitario
+                println("$producto - Cantidad: $cantidad - Precio unitario: $precioUnitario - Precio total: $precioTotal")
+            }
+            println("Precio total de la carretilla: ${calcularPrecioTotal()}")
+        }
+    }
+
+    // Calcular el precio total de la carretilla
+    private fun calcularPrecioTotal(): Double {
+        return productos.sumOf { (producto, cantidad) ->
+            val precioUnitario = precios[producto] ?: 0.0
+            cantidad * precioUnitario
+        }
+    }
 }
