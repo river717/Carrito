@@ -47,6 +47,23 @@ fun gestionarCarretilla(carretilla: Carretilla, archivo: Archivo) {
 
         when(opcionCarretilla){
             1-> carretilla.mostrarCarretilla()
+            2-> {
+                println("Ingrese el id del producto a agregar: ")
+                val id = readLine()!!
+                val productoInfo = archivo.datos.find { it.split(",")[0] == id }
+                if (productoInfo != null){
+                    val (_, producto, existencia, precioUnitario) = productoInfo.split(",")
+                    println("Ingrese la cantidad de $producto que desea agregar (Disponible $existencia): ")
+                    val cantidad = readLine()!!.toInt()
+                    if (cantidad <= existencia.toInt()){
+                        carretilla.agregarProducto(producto, cantidad, precioUnitario.toDouble())
+                    } else {
+                        println("No hay suficiente producto en existencia.")
+                    }
+                } else {
+                    println("No se encontro el producto con el id $id")
+                }
+            }
         }
     } while (opcionCarretilla != 3)
 }
@@ -154,5 +171,11 @@ class Carretilla(){
             val precioUnitario = precios[producto] ?: 0.0
             cantidad * precioUnitario
         }
+    }
+
+    fun agregarProducto(producto: String, cantidad: Int, precioUnitario: Double) {
+        productos.add(Pair(producto,cantidad))
+        precios[producto] = precioUnitario
+        println("$cantidad unidades del producto $producto agregados a la carretilla")
     }
 }
