@@ -17,7 +17,7 @@ fun main() {
         println("1. Mostrar la lista de productos.")
         println("2. Agregar productos.")
         println("3. Editar productos.")
-        println("4. Gestionar carrito")
+        println("4. Gestionar carrito de compras.")
         println("5. Salir.")
 
         print("Seleccione una opción: ")
@@ -41,7 +41,8 @@ fun gestionarCarretilla(carretilla: Carretilla, archivo: Archivo) {
         println("----------------------------------")
         println("1. Mostrar productos en el carrito.")
         println("2. Agregar producto al carrito.")
-        println("3. Volver al menú principal.")
+        println("5. Pagar carrito.")
+        println("6. Volver al menú principal.")
 
         print("Elija una opción: ")
         opcionCarretilla = readLine()!!.toInt()
@@ -65,8 +66,11 @@ fun gestionarCarretilla(carretilla: Carretilla, archivo: Archivo) {
                     println("No se encontró el producto con el id $id")
                 }
             }
+            5-> {
+                carretilla.generarFactura(carretilla, archivo)
+            }
         }
-    } while (opcionCarretilla != 3)
+    } while (opcionCarretilla != 6)
 }
 
 class Archivo(){
@@ -101,7 +105,7 @@ class Archivo(){
 
         datos.add("${id},${producto},${existencia},${precioUnitario}")
 
-        guardarArchivo()
+        guardarArchivo(1)
     }
 
     fun editarProducto(){
@@ -125,17 +129,22 @@ class Archivo(){
 
         datos[posicion] = "${id},${producto},${existencia},${precioUnitario}"
 
-        guardarArchivo()
+        guardarArchivo(2)
     }
 
     //metodo para guardar el archivo
-    private fun guardarArchivo() {
+    private fun guardarArchivo(aux: Number) {
         val escritor = FileWriter(archivo)
         for (linea in datos){
             escritor.write(linea + "\n")
         }
-        println("Producto agregado exitosamente.")
         escritor.close()
+        if (aux == 1){
+            println("Producto agregado correctamente.")
+        } else if (aux == 2){
+            println("Producto editado correctamente.")
+        }
+
     }
 
     //Este metodo muestra la lista, aun con cuando se agregar filas nuevas
@@ -150,6 +159,18 @@ class Archivo(){
             // Usamos String.format() para alinear los valores en columnas
             println(String.format("%-4s | %-10s | %-8s | %-13s", id, producto, existencia, "$$precioUnitario"))
         }
+    }
+
+    fun actualizarInventario(productosComprados: Map<String, Int>) {
+        productosComprados.forEach { (producto, cantidadComprada) ->
+            val posicion = datos.indexOfFirst { it.split(",")[1] == producto }
+            if (posicion != -1) {
+                val (id, nombre, existencia, precioUnitario) = datos[posicion].split(",")
+                val nuevaExistencia = existencia.toInt() - cantidadComprada
+                datos[posicion] = "$id,$nombre,$nuevaExistencia,$precioUnitario"
+            }
+        }
+        guardarArchivo(3)
     }
 }
 
@@ -185,5 +206,38 @@ class Carretilla(){
         productos.add(Pair(producto,cantidad))
         precios[producto] = precioUnitario
         println("\n$cantidad unidades del producto $producto agregados al carrito")
+    }
+
+    fun generarFactura(carretilla: Carretilla, archivo: Archivo) {
+        if (productos.isEmpty()) {
+            println("\nNo hay productos en el carrito para facturar.")
+            return
+        }
+
+        println("\n--- FACTURA ---")
+        println("Producto     | Cantidad | Precio unidad | Precio total")
+        println("-------------------------------------------------------")
+        var totalSinImpuesto = 0.0
+
+        productos.forEach { (producto, cantidad) ->
+            val precioUnitario = precios[producto] ?: 0.0
+            val precioTotal = cantidad * precioUnitario
+            totalSinImpuesto += precioTotal
+            println(String.format("%-12s | %-8s | %-13s | %-10s", producto, cantidad, "$$precioUnitario", "$$precioTotal"))
+        }
+
+        val impuesto = totalSinImpuesto * 0.13
+        val totalConImpuesto = totalSinImpuesto + impuesto
+
+        println("------------------------")
+        println("Subtotal: $${"%.2f".format(totalSinImpuesto)}")
+        println("Impuesto (13%): $${"%.2f".format(impuesto)}")
+        println("Total a pagar: $${"%.2f".format(totalConImpuesto)}")
+
+        archivo.actualizarInventario(carretilla.obtenerProductosComprados())
+    }
+
+    fun obtenerProductosComprados(): Map<String, Int> {
+        return productos.associate { it.first to it.second }
     }
 }
