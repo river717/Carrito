@@ -140,8 +140,15 @@ class Archivo(){
 
     //Este metodo muestra la lista, aun con cuando se agregar filas nuevas
     fun mostrarArchivo(){
-        for (linea in datos){
-            println(linea)
+        println("\n--- Inventario de Productos ---")
+        println("ID   | Producto    | Existencia | Precio Unitario")
+        println("---------------------------------------------")
+
+        for (linea in datos) {
+            val (id, producto, existencia, precioUnitario) = linea.split(",")
+
+            // Usamos String.format() para alinear los valores en columnas
+            println(String.format("%-4s | %-10s | %-8s | %-13s", id, producto, existencia, "$$precioUnitario"))
         }
     }
 }
