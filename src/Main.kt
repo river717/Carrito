@@ -79,10 +79,12 @@ fun gestionarCarretilla(carretilla: Carretilla, archivo: Archivo) {
                 }
             }
             4-> carretilla.borrarCarretilla()
-            5-> println("Volviendo al menu principal...")
+
             5-> {
                 carretilla.generarFactura(carretilla, archivo)
             }
+
+            6-> println("Volviendo al menu principal...")
         }
     } while (opcionCarretilla != 6)
 }
