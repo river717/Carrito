@@ -222,6 +222,37 @@ class Carretilla(){
         println("\n$cantidad unidades del producto $producto agregados al carrito")
     }
 
+    // Quitar un producto de la carretilla
+    fun quitarProducto(producto: String) {
+        if (productos.isEmpty()) {
+            println("El carrito está vacio, no hay productos que quitar.")
+        } else {
+            val productoEnCarretilla = productos.find { it.first == producto }
+            if (productoEnCarretilla != null) {
+                productos.remove(productoEnCarretilla)
+                precios.remove(producto)
+                println("Producto '$producto' retirado de la carretilla.")
+            } else {
+                println("El producto '$producto' no esta en la carretilla.")
+            }
+        }
+    }
+
+    fun borrarCarretilla(){
+        if (productos.isEmpty()){
+            println("El carrito esta vacio")
+        } else{
+            println("Esta seguro que desea borrar la carretilla? Y/N")
+            var res = readLine()!!.trim().uppercase()
+            if (res == "Y"){
+                productos.clear()
+                println("La carretilla ha sido borrada!")
+            } else {
+                println("Operacion cancellada. La carretila no se ha borrado")
+            }
+        }
+    }
+
     fun generarFactura(carretilla: Carretilla, archivo: Archivo) {
         if (productos.isEmpty()) {
             println("\nNo hay productos en el carrito para facturar.")
