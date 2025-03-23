@@ -41,7 +41,9 @@ fun gestionarCarretilla(carretilla: Carretilla, archivo: Archivo) {
         println("----------------------------------")
         println("1. Mostrar productos en el carrito.")
         println("2. Agregar producto al carrito.")
-        println("5. Pagar carrito.")
+        println("3. Quitar producto de la carretilla.")
+        println("4. Borrar carretilla.")
+        println("5. Pagar Carrito")
         println("6. Volver al menú principal.")
 
         print("Elija una opción: ")
@@ -66,6 +68,18 @@ fun gestionarCarretilla(carretilla: Carretilla, archivo: Archivo) {
                     println("No se encontró el producto con el id $id")
                 }
             }
+            3->{
+                println("Ingrese el id del producto a quitar de la carretilla:")
+                val id = readLine()!!
+                val producto = archivo.datos.find { it.split(",")[0] == id }
+                if (producto != null){
+                    carretilla.quitarProducto(producto)
+                } else{
+                    println("No se encontro un producto con el ID $id")
+                }
+            }
+            4-> carretilla.borrarCarretilla()
+            5-> println("Volviendo al menu principal...")
             5-> {
                 carretilla.generarFactura(carretilla, archivo)
             }
